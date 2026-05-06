@@ -37,12 +37,14 @@ app.use(cors({
   credentials: true,
 }));
 
+app.options('*', cors());
+
+
 app.use(compression());
 app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-app.options('*', cors());
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
