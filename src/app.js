@@ -23,6 +23,7 @@ const adminSubmissionRoutes = require('./routes/admin/submissions');
 
 const app = express();
 
+// fix
 app.set('trust proxy', 1);
 
 // Create uploads directory if it doesn't exist
