@@ -45,16 +45,37 @@ if (!fs.existsSync(uploadsDir)) {
 // Middleware
 app.use(helmet());
 
+const getEnvValue = (name, fallback) => {
+  const value = process.env[name];
+  return typeof value === 'string' ? value.trim() : fallback;
+};
+
+const corsOrigins = getEnvValue('CORS_ORIGIN', 'http://localhost:3000')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+console.log('CORS_ORIGIN raw:', JSON.stringify(process.env.CORS_ORIGIN));
+console.log('Allowed CORS origins:', corsOrigins);
+
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+    if (corsOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS origin denied: ${origin}`));
+  },
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
+  optionsSuccessStatus: 204,
 };
 
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions)); // ✅ same config for preflight
-
 
 app.use(compression());
 app.use(morgan('combined'));
@@ -98,14 +119,5 @@ app.listen(PORT, () => {
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
-process.on('uncaughtException', (err) => {
-  console.error('UNCAUGHT EXCEPTION:', err);
-  process.exit(1);
-});
-
-process.on('unhandledRejection', (reason) => {
-  console.error('UNHANDLED REJECTION:', reason);
-  process.exit(1);
-});
 
 module.exports = app;
