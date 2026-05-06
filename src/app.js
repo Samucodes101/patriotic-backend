@@ -1,4 +1,4 @@
-jsprocess.on('uncaughtException', (err) => {
+process.on('uncaughtException', (err) => {
   console.error('UNCAUGHT EXCEPTION:', err.message, err.stack);
   process.exit(1);
 });
