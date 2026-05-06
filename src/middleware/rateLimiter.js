@@ -10,6 +10,7 @@ const globalLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false }, // ✅ fixes Railway proxy issue
 });
 
 const strictLimiter = rateLimit({
@@ -22,6 +23,7 @@ const strictLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false }, // ✅ fixes Railway proxy issue
 });
 
 module.exports = { globalLimiter, strictLimiter };
