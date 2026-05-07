@@ -13,7 +13,7 @@ const diasporaSchema = z.object({
   country: z.string().trim().min(2).max(100),
   profession: z.string().trim().max(150).optional(),
   interest: z.string().trim().min(1).max(100),
-  message: z.string().trim().min(10).max(5000),
+  message: z.string().trim().min(5).max(5000),
 });
 
 router.post('/', strictLimiter, asyncHandler(async (req, res) => {
