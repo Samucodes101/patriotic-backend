@@ -3,12 +3,25 @@ const prisma = require('./prisma');
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
-  port: parseInt(process.env.EMAIL_PORT),
-  secure: false,
+  port: Number(process.env.EMAIL_PORT),
+  secure: false, // MUST be false for 587
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
   },
+
+  // IMPORTANT FIXES
+  requireTLS: true,
+  tls: {
+    rejectUnauthorized: false,
+    minVersion: 'TLSv1.2',
+  },
+
+  connectionTimeout: 30000,
+  greetingTimeout: 30000,
+  socketTimeout: 30000,
+
+  family: 4, // FORCE IPv4
 });
 
 const sendEmail = async (to, subject, text, html = null) => {
